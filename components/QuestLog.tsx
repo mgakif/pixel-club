@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
-import { Quest } from '../types';
-import { generateAIQuest } from '../services/gemini';
+import { Quest } from '../types.ts';
+import { generateAIQuest } from '../services/gemini.ts';
 
 const INITIAL_QUESTS: Quest[] = [
   {

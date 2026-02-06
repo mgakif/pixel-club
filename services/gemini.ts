@@ -1,9 +1,24 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// Safe access to API Key
+const getApiKey = () => {
+  try {
+    return process.env.API_KEY || '';
+  } catch (e) {
+    return '';
+  }
+};
 
 export const generateAIQuest = async (topic: string) => {
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    console.error("API Key is missing. AI Quest generation will not work.");
+    return null;
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
+
   try {
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',

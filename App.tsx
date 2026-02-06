@@ -1,16 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
-import { Header } from './components/Header';
-import { Hero } from './components/Hero';
-import { StatsBar } from './components/StatsBar';
-import { QuestLog } from './components/QuestLog';
-import { Footer } from './components/Footer';
-import { Mascot } from './components/Mascot';
-import { Quest } from './types';
+import React from 'react';
+import { Header } from './components/Header.tsx';
+import { Hero } from './components/Hero.tsx';
+import { StatsBar } from './components/StatsBar.tsx';
+import { QuestLog } from './components/QuestLog.tsx';
+import { Footer } from './components/Footer.tsx';
+import { Mascot } from './components/Mascot.tsx';
 
 const App: React.FC = () => {
-  const [showOracle, setShowOracle] = useState(false);
-
   return (
     <div className="relative flex min-h-screen w-full flex-col">
       {/* Scanline Overlay */}
@@ -25,9 +22,7 @@ const App: React.FC = () => {
       </main>
 
       <Footer />
-      <Mascot onOracleToggle={() => setShowOracle(!showOracle)} />
-      
-      {/* Dynamic Overlay or Modal can be added here */}
+      <Mascot onOracleToggle={() => {}} />
     </div>
   );
 };
