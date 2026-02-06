@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { isSupabaseConfigured } from '../services/supabase.ts';
 
 interface DashboardProps {
   currentLogo: string;
@@ -17,6 +18,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentLogo, onLogoChange,
 
   return (
     <section className="w-full max-w-[1200px] px-6 py-12">
+      {/* Connection Status Header */}
+      <div className="mb-8 flex items-center gap-4 bg-black/50 p-4 pixel-border border-l-8 border-l-primary">
+        <div className={`w-3 h-3 rounded-full animate-pulse ${isSupabaseConfigured ? 'bg-green-500' : 'bg-orange-500'}`}></div>
+        <span className="text-xs font-black uppercase tracking-widest">
+          {isSupabaseConfigured ? 'System Status: ONLINE (Supabase Active)' : 'System Status: OFFLINE (Demo Mode Active)'}
+        </span>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left: Profile Card */}
         <div className="lg:col-span-1">
@@ -45,7 +54,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ currentLogo, onLogoChange,
             <div className="space-y-10">
               {/* Logo Settings */}
               <div className="space-y-4">
-                <h4 className="text-sm font-black uppercase tracking-widest text-arcade-yellow border-b-2 border-arcade-yellow/20 pb-2">Customize Club Icon</h4>
+                <div className="flex justify-between items-end border-b-2 border-arcade-yellow/20 pb-2">
+                  <h4 className="text-sm font-black uppercase tracking-widest text-arcade-yellow">Customize Club Icon</h4>
+                  <span className="text-[10px] font-bold text-gray-500 uppercase italic">Changes save to local storage</span>
+                </div>
                 <div className="flex flex-wrap gap-4 mb-6">
                   {icons.map(icon => (
                     <button 

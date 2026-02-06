@@ -1,13 +1,18 @@
 
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || '';
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY;
 
-// Eğer anahtarlar yoksa bile client oluşturuyoruz ama bir uyarı bayrağı ekliyoruz
-export const isSupabaseConfigured = supabaseUrl !== '' && !supabaseUrl.includes('placeholder');
+// Değişkenlerin tanımlı olup olmadığını ve geçerli bir URL olup olmadığını kontrol et
+export const isSupabaseConfigured = 
+  !!supabaseUrl && 
+  !!supabaseAnonKey && 
+  supabaseUrl.startsWith('https://') &&
+  !supabaseUrl.includes('placeholder');
 
+// Eğer konfigürasyon yoksa, uygulamanın çökmemesi için dummy bir client döndür
 export const supabase = createClient(
-  isSupabaseConfigured ? supabaseUrl : 'https://example.supabase.co', 
-  isSupabaseConfigured ? supabaseAnonKey : 'no-key'
+  isSupabaseConfigured ? supabaseUrl : 'https://dummy.supabase.co', 
+  isSupabaseConfigured ? supabaseAnonKey : 'dummy-key'
 );
