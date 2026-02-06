@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react';
-import { supabase } from '../services/supabase.ts';
+import { supabase, isSupabaseConfigured } from '../services/supabase.ts';
 
 interface AuthProps {
   onClose: () => void;
+  onMockLogin?: (email: string) => void;
 }
 
-export const Auth: React.FC<AuthProps> = ({ onClose }) => {
+export const Auth: React.FC<AuthProps> = ({ onClose, onMockLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -15,6 +16,11 @@ export const Auth: React.FC<AuthProps> = ({ onClose }) => {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isSupabaseConfigured) {
+      setError("Supabase URL is not configured. Use Demo Access.");
+      return;
+    }
+    
     setLoading(true);
     setError(null);
 
@@ -35,12 +41,19 @@ export const Auth: React.FC<AuthProps> = ({ onClose }) => {
     }
   };
 
+  const handleDemoAccess = () => {
+    if (onMockLogin) {
+      onMockLogin('demo_player@pixel.club');
+      onClose();
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-6 backdrop-blur-sm">
       <div className="pixel-card w-full max-w-md p-8 relative">
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 text-white hover:text-primary"
+          className="absolute top-4 right-4 text-white hover:text-primary transition-colors"
         >
           <span className="material-symbols-outlined">close</span>
         </button>
@@ -52,11 +65,15 @@ export const Auth: React.FC<AuthProps> = ({ onClose }) => {
           <h2 className="text-3xl font-black uppercase tracking-tighter text-primary">
             {isSignUp ? 'New Player' : 'Member Login'}
           </h2>
-          <p className="text-xs text-gray-400 font-bold mt-2 uppercase">System access required</p>
+          {!isSupabaseConfigured && (
+            <p className="text-[10px] text-arcade-yellow font-black mt-2 uppercase">
+              Notice: Offline Mode (Supabase not configured)
+            </p>
+          )}
         </div>
 
         {error && (
-          <div className="bg-red-500/20 border-2 border-red-500 p-3 mb-6 text-red-500 text-xs font-bold uppercase">
+          <div className="bg-red-500/20 border-2 border-red-500 p-3 mb-6 text-red-500 text-[10px] font-bold uppercase">
             Error: {error}
           </div>
         )}
@@ -70,7 +87,7 @@ export const Auth: React.FC<AuthProps> = ({ onClose }) => {
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-black border-4 border-white/10 p-4 text-white font-bold focus:border-primary outline-none"
               placeholder="PLAYER@PIXEL.CLUB"
-              required
+              required={isSupabaseConfigured}
             />
           </div>
           <div className="space-y-2">
@@ -81,17 +98,27 @@ export const Auth: React.FC<AuthProps> = ({ onClose }) => {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-black border-4 border-white/10 p-4 text-white font-bold focus:border-primary outline-none"
               placeholder="********"
-              required
+              required={isSupabaseConfigured}
             />
           </div>
 
-          <button 
-            type="submit"
-            disabled={loading}
-            className="w-full pixel-button bg-primary text-black py-4 font-black uppercase tracking-widest text-lg disabled:opacity-50"
-          >
-            {loading ? 'Authenticating...' : isSignUp ? 'Create Profile' : 'Access System'}
-          </button>
+          <div className="flex flex-col gap-4">
+            <button 
+              type="submit"
+              disabled={loading || !isSupabaseConfigured}
+              className="w-full pixel-button bg-primary text-black py-4 font-black uppercase tracking-widest text-lg disabled:opacity-30"
+            >
+              {loading ? 'Authenticating...' : isSignUp ? 'Create Profile' : 'Access System'}
+            </button>
+
+            <button 
+              type="button"
+              onClick={handleDemoAccess}
+              className="w-full pixel-button bg-arcade-yellow text-black py-3 font-black uppercase tracking-widest text-sm"
+            >
+              Bypass / Demo Access
+            </button>
+          </div>
         </form>
 
         <div className="mt-8 pt-6 border-t-2 border-white/5 text-center">
